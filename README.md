@@ -1,0 +1,2 @@
+# aws
+traning aws
