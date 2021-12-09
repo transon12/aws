@@ -41,16 +41,10 @@ export class VpcCreateNewStack extends cdk.Stack {
     const webserverRole = new iam.Role(this, 'webserver-role', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
       managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3ReadOnlyAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName(''),
       ],
     });
-    // const keyPairNew = new KeyPair(this, 'Simple-Key-Pair', {
-    //   name: 'simple-key-pair',
-    //   description: 'This is a Key Pair simple instance',
-    //   storePublicKey: true, // by default the public key will not be stored in Secrets Manager
-    // });
 
-    // keyPairNew.grantRead(webserverRole)
 
     // create the EC2 Instance
     const ec2Instance = new ec2.Instance(this, 'ec2-instance', {
@@ -59,7 +53,7 @@ export class VpcCreateNewStack extends cdk.Stack {
       vpcSubnets: {
         subnetType: ec2.SubnetType.PUBLIC,
       },
-      role: webserverRole,
+
       securityGroup: webserverSG,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T2,
