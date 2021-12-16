@@ -40,39 +40,35 @@ export class builderStack extends cdk.Stack {
         });
 
         new codebuild.Project(this, 'MyProject', {
+            role: new iam.Role(this, "codebuild-role", {
+                assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
+                inlinePolicies: {
+                    "codebuild-policies": new iam.PolicyDocument({
+                        statements: [
+                            new iam.PolicyStatement({
+                                actions: [
+                                    "ssm:GetParameters",
+                                    "sts:AssumeRole",
+                                    "iam:*",
+                                    "ec2:*",
+                                    "cloudformation:*",
+                                    "autoscaling:*",
+                                    "elasticloadbalancing:*",
+                                ],
+                                resources: ["*"],
+                            }),
+                        ],
+                    }),
+                },
+            }),
             buildSpec: codebuild.BuildSpec.fromObject({
                 version: '0.2',
-                // environment: {
-                //     'computeType': ComputeType.SMALL,
-                // },
-                role: new iam.Role(this, "codebuild-role", {
-                    assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
-                    inlinePolicies: {
-                        "codebuild-policies": new iam.PolicyDocument({
-                            statements: [
-                                new iam.PolicyStatement({
-                                    actions: [
-                                        "ssm:GetParameters",
-                                        "sts:AssumeRole",
-                                        "iam:*",
-                                        "ec2:*",
-                                        "cloudformation:*",
-                                        "autoscaling:*",
-                                        "elasticloadbalancing:*",
-                                    ],
-                                    resources: ["*"],
-                                }),
-                            ],
-                        }),
-                    },
-                }),
                 phases: {
                     build: {
                         commands: [
-                            "eho start build",
-                            "export VERSION=$(date +\\%Y\\%m\\%d\\%H\\%M\\%S)",
-                            "npm install -g aws-cdk@1.133",
                             "npm install -g typescript",
+                            "npm install -g aws-cdk@1.133",
+                            "echo cdk -v",
                             "cdk --version",
                             "git clone https://github.com/transon12/aws.git",
                             "cd aws",

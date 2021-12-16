@@ -33,13 +33,13 @@ export class VpcCreateNewStack extends cdk.Stack {
       ec2.Port.tcp(443),
     );
 
-    //  create a Role for the EC2 Instance
-    const webserverRole = new iam.Role(this, 'webserver-role', {
-      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName(''),
-      ],
-    });
+    // //  create a Role for the EC2 Instance
+    // const webserverRole = new iam.Role(this, 'webserver-role', {
+    //   assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+    //   managedPolicies: [
+    //     iam.ManagedPolicy.fromAwsManagedPolicyName(''),
+    //   ],
+    // });
 
 
     // create the EC2 Instance
@@ -58,7 +58,7 @@ export class VpcCreateNewStack extends cdk.Stack {
       machineImage: new ec2.AmazonLinuxImage({
         generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
       }),
-      keyName: 'simple-instance-1-key',
+      keyName: 'simple-instance-2-key',
     });
 
     //  load contents of script
