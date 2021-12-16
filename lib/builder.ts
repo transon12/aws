@@ -1,12 +1,13 @@
 import * as cdk from '@aws-cdk/core';
 import ec2 = require('@aws-cdk/aws-ec2');
 import * as codebuild from '@aws-cdk/aws-codebuild';
+import { ComputeType } from '@aws-cdk/aws-codebuild';
 import * as iam from '@aws-cdk/aws-iam';
 
-export class builder extends cdk.Stack {
+export class builderStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
-        // Create ACM Permission Policy
+        //Create ACM Permission Policy
         const describeAcmCertificates = new iam.PolicyDocument({
             statements: [
                 new iam.PolicyStatement({
@@ -41,10 +42,30 @@ export class builder extends cdk.Stack {
         new codebuild.Project(this, 'MyProject', {
             buildSpec: codebuild.BuildSpec.fromObject({
                 version: '0.2',
-                environment: {
-                    'computeType': codebuild.ComputeType.SMALL,
-                },
-                role: codeBuildRole,
+                // environment: {
+                //     'computeType': ComputeType.SMALL,
+                // },
+                role: new iam.Role(this, "codebuild-role", {
+                    assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
+                    inlinePolicies: {
+                        "codebuild-policies": new iam.PolicyDocument({
+                            statements: [
+                                new iam.PolicyStatement({
+                                    actions: [
+                                        "ssm:GetParameters",
+                                        "sts:AssumeRole",
+                                        "iam:*",
+                                        "ec2:*",
+                                        "cloudformation:*",
+                                        "autoscaling:*",
+                                        "elasticloadbalancing:*",
+                                    ],
+                                    resources: ["*"],
+                                }),
+                            ],
+                        }),
+                    },
+                }),
                 phases: {
                     build: {
                         commands: [
