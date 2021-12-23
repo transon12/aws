@@ -1,0 +1,35 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+    container_name: mysql
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projectnew
+      MYSQL_USER: projectnew
+      MYSQL_PASSWORD: 1111
+      TZ: 'Asia/Tokyo'
+  app:
+    restart: always
+    build: php-apache
+    container_name: app
+    ports:
+      - '8001:8000'
+    volumes:
+      - ../app.:/var/www/app:cached
+    environment:
+      TZ: 'Asia/Tokyo'
+  https-portal:
+    image: steveltn/https-portal:1
+    container_name: https-portal
+    ports:
+      - '80:80'
+      - '443:443'
+    links:
+      - app
+    volumes:
+      - ./https:/var/lib/https-portal

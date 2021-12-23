@@ -58,7 +58,7 @@ export class ec2Stack extends cdk.Stack {
       keyName: "simple-instance-2-key",
     });
 
-    const asg = new AutoScalingGroup(this, "asg", {
+    const autoScale = new AutoScalingGroup(this, "autoScale", {
       vpc: vpc,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
       machineImage: ec2.MachineImage.lookup({
@@ -86,7 +86,7 @@ export class ec2Stack extends cdk.Stack {
 
     listener.addTargets("alb-target", {
       port: 80,
-      targets: [asg],
+      targets: [autoScale],
       healthCheck: {
         healthyHttpCodes: "200",
         path: "/",
