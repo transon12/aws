@@ -1,0 +1,30 @@
+FROM php:7.4-apache
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+RUN apt-get update && apt-get install -y \
+    unzip \
+    libzip-dev \
+    zlib1g-dev \
+    && docker-php-ext-install \
+    zip \
+    pdo_mysql \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod rewrite \
+    && mv /etc/apache2/sites-enabled/000-default.conf /etc/apache2/sites-enabled/000-default.conf.bk \
+    && mv /etc/apache2/ports.conf /etc/apache2/ports.conf.bk \
+    && cp /usr/share/zoneinfo/Japan /etc/localtime
+COPY ./php-apache/apache2.conf /etc/apache2/apache2.conf
+COPY ./php-apache/ports.conf /etc/apache2/ports.conf
+
+
+WORKDIR /var/www/app
+COPY ./app /var/www/app/
+RUN composer install 
+RUN chown -R :apache /var/www/html && \
+    chmod 2775 /var/www/html && \
+    chown -R :apache storage && \
+    chown -R :apache bootstrap/cache && \
+    chgrp -R apache storage bootstrap/cache && \
+    chmod -R ug+rwx storage bootstrap/cache
+RUN
