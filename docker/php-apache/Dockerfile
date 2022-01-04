@@ -16,8 +16,15 @@ RUN apt-get update && apt-get install -y \
     && cp /usr/share/zoneinfo/Japan /etc/localtime
 COPY ./apache2.conf /etc/apache2/apache2.conf
 COPY ./ports.conf /etc/apache2/ports.conf
-# RUN  mv /etc/apache2/sites-enabled/000-default.conf /etc/apache2/sites-enabled/000-default.conf.bk 
-# RUN  ln -nfs /usr/share/zoneinfo/Japan /etc/localtime
-# COPY ./php.ini /usr/local/etc/php/php.ini
+
 
 WORKDIR /var/www/app
+ADD ../../app /var/www/app/
+RUN composer install && npm install
+RUN chown -R :apache /var/www/html && \
+    chmod 2775 /var/www/html && \
+    chown -R :apache storage && \
+    chown -R :apache bootstrap/cache && \
+    chgrp -R apache storage bootstrap/cache && \
+    chmod -R ug+rwx storage bootstrap/cache
+RUN

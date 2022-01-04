@@ -83,13 +83,13 @@ export class builderStack extends cdk.Stack {
             ],
         });
 
-        new Project(this, 'codeBuild-ver-1', {
+        new Project(this, 'code-build-ver-1', {
             buildSpec: BuildSpec.fromObject({
                 phases: {
                     build: {
                         commands: [
                             "npm install -g typescript",
-                            "npm install -g aws-cdk@1.133",
+                            "npm install -g aws-cdk",
                             "echo cdk -v",
                             "cdk --version",
                             "git clone https://github.com/transon12/aws.git",
@@ -102,39 +102,10 @@ export class builderStack extends cdk.Stack {
                     },
                 },
             }),
-            role: new iam.Role(this, "codebuild-role", {
-                assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
-                inlinePolicies: {
-                    "codebuild-policies": new iam.PolicyDocument({
-                        statements: [
-                            new iam.PolicyStatement({
-                                actions: [
-                                    "ssm:GetParameters",
-                                    "sts:AssumeRole",
-                                    "iam:*",
-                                    "ec2:*",
-                                    "cloudformation:*",
-                                    "autoscaling:*",
-                                    "elasticloadbalancing:*",
-                                ],
-                                resources: ["*"],
-                            }),
-                        ],
-                    }),
-                },
-            }),
             environment: {
                 buildImage: LinuxBuildImage.STANDARD_5_0,
                 privileged: true,
                 computeType: ComputeType.SMALL,
-            },
-            environmentVariables: {
-                DEBUG: { value: process.env.DEBUG },
-
-                AWS_DEFAULT_REGION: { value: process.env.AWS_DEFAULT_REGION },
-
-                CDK_DEFAULT_ACCOUNT: { value: process.env.CDK_DEFAULT_ACCOUNT },
-                CDK_DEFAULT_REGION: { value: process.env.CDK_DEFAULT_REGION },
             },
         });
     }

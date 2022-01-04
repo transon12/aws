@@ -11,4 +11,4 @@ const env = {
 const app = new cdk.App();
 const builder = new builderStack(app, 'builderStack', { env });
 // console.log(builder)
-// new ec2Stack(app, 'ec2Stack', { vpc: builder.vpc });
+new ec2Stack(app, 'ec2Stack', { vpc: builder.vpc, env });

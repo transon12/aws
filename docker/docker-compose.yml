@@ -20,7 +20,8 @@ services:
     ports:
       - '8001:8000'
     volumes:
-      - ../app.:/var/www/app:cached
+      - ./app.:/var/www/app
+
     environment:
       TZ: 'Asia/Tokyo'
   https-portal:
